@@ -1,66 +1,41 @@
 from django.db import models
 
-class Order(models.Model):
-    STATUS_CHOICES=(
-        ("Preparing","preparing"),
-        ("Accepted","accepted"),
-        ("Ready To Collect","ready to collect"),
-        ("Delivered","delivered")
-    )
-    PAYMENT_STATUS_CHOICES=(
-        ("Pending","pending"),
-        ("Paid","paid")
-    )
-    PAYMENT_TYPE=(
-        ("Online","online"),
-        ("Offline","offline")
+from django.core.validators import MinValueValidator
+from decimal import Decimal
+
+class Menu(models.Model):
+
+    QUANTITY_CHOICES=(
+        ("Half","half"),
+        ("Full","full")
     )
 
-    OrderID = models.BigAutoField(
-        primary_key=True,
-        unique=True
-    )
-
-    CustName = models.CharField(
-        max_length=100
-    )
-
-    Phone = models.BigIntegerField(
-        max_length=10
-    )
-
-    Items= models.JSONField(
-        default=list,
-        blank=True
-    )
-
-    Total = models.BigAutoField(
+    ItemName = models.CharField(
+        max_length=100,
         null=True,
         blank=True
     )
 
-    Car_number = models.CharField(
+    ItemQuantity = models.CharField(
+        max_length = 20,
+        choices=QUANTITY_CHOICES,
         null=True,
         blank=True
     )
 
-    Table_number = models.BigAutoField(
+    ItemPrice = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.01'))],
         null=True,
         blank=True
     )
 
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        null=True,
+        blank=True
     )
 
-    Staff = models.CharField(
-        null=True,
-        Blank=True
-    )
-    
-    payment_status = models.CharField(
-        max_length=20,
-        choices=PAYMENT_STATUS_CHOICES
-    )
-    
+    def __str__(self):
+        return self.ItemName
