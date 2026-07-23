@@ -63,7 +63,7 @@ class Order(models.Model):
         blank=True
     )
 
-    status = models.CharField(
+    Status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default='Preparing'
@@ -74,14 +74,14 @@ class Order(models.Model):
         blank=True
     )
     
-    payment_status = models.CharField(
+    Payment_Status = models.CharField(
         max_length=20,
         choices=PAYMENT_STATUS_CHOICES,
         blank=True,
         null=True
     )
 
-    payment_type = models.CharField(
+    Payment_Type = models.CharField(
         max_length=10,
         choices=PAYMENT_TYPE,
         blank=True,

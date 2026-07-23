@@ -11,46 +11,45 @@ from Demo.models.menu import (
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     model=Order
-    list_display=(
-        "OrderID",
+    list_display=[
         "CustName",
         "Phone",
         "Items",
         "Car_number",
         "Table_number",
         "Total",
-        "status",
+        "Status",
         "Staff",
-        "payment_status",
-        "payment_type",
-    )
+        "Payment_Status",
+        "Payment_Type",
+    ]
 
-    search_fields=(
+    search_fields=[
         "Car_number",
         "Table_number",
-        "status",
-        "payment_type",
-        "payment_status",
+        "Status",
+        "Payment_Type",
+        "Payment_Status",
         "Staff",
-    )
+    ]
 
-    list_filter=(
-        "Created_at"
-    )
+    list_filter=[
+        "created_at"
+    ]
 
 @admin.register(Menu)
 class MenuAdmin(admin.ModelAdmin):
 
-    list_display=(
+    list_display=[
         "id",
         "ItemName",
         "ItemQuantity",
         "ItemPrice"
-    )
-    search_fields=(
+    ]
+    search_fields=[
         "ItemName",
         "itemPrice"
-    )
-    list_filter=(
+    ]
+    list_filter=[
         "created_at"
-    )
+    ]
