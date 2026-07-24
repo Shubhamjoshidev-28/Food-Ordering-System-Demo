@@ -14,6 +14,5 @@ def get_menu_by_id(
 ):
     return (
         Menu.objects
-        .select_related("ItemName")
         .get(id=menu_id)
     )

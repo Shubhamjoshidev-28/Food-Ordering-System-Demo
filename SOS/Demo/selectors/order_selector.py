@@ -7,7 +7,6 @@ def get_order_by_id(
 ):
     return (
         Order.objects
-        .select_related("CustName")
         .get(id=order_id)
     )
 

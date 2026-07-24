@@ -8,6 +8,12 @@ from Demo.models.orders import (
 class Order_Serializer(
     serializers.ModelSerializer
 ):
+    CustName = serializers.CharField(
+        required=True
+    )
+    Items = serializers.JSONField(
+        required=True
+    )
     class Meta:
         model=Order
         fields=[

@@ -16,12 +16,12 @@ class Order_Service :
 
     @staticmethod
     def build_order_items(
-        items
+        Items
     ):
          order_items = []
          total = Decimal("0.00")
      
-         for item in items:
+         for item in Items:
      
              menu = get_menu_by_id(item["menu_id"])
      
@@ -46,8 +46,9 @@ class Order_Service :
     def create_order(
         validated_data,
     ):
+        Items=validated_data["Items"]
         Items , Total = Order_Service.build_order_items(
-            validated_data["Items"]
+            Items
         )
         
         order=Order.objects.create(
@@ -62,6 +63,7 @@ class Order_Service :
             Payment_Status=validated_data['Payment_Status']
 
         )
+        
         return order
 
     @staticmethod
@@ -74,7 +76,7 @@ class Order_Service :
         return order
 
         
-    staticmethod
+    @staticmethod
     def update_order(
         order_id,
         validated_data
@@ -112,7 +114,7 @@ class Order_Service :
             order_id
         )
 
-        order.delete
+        order.delete()
         return ("Order Removed Successfully")
 
     @staticmethod

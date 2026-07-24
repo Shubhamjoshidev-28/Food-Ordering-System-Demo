@@ -5,8 +5,7 @@ from Demo.serializer.order_serializer  import (
     Order_Serializer
 )
 from Demo.selectors.order_selector import (
-    get_order,
-    get_order_by_id
+    get_order
 )
 from Demo.services.order_services import (
     Order_Service
@@ -47,7 +46,7 @@ class Create_Order_Api(
                         "Customer_Name": order.CustName,
                         "Phone":order.Phone,
                         "Car_number":order.Car_number,
-                        "Table_number":order.Table_number_number,
+                        "Table_number":order.Table_number,
                         "Items":order.Items,
                         "Total":order.Total,
                         "Status":order.Status,
@@ -64,8 +63,8 @@ class Update_Order_Api(
 ):
     def patch(
             self,
-            order_id,
-            request
+            request,
+            order_id
     ):
 
         serializer = Order_Serializer(
@@ -77,7 +76,7 @@ class Update_Order_Api(
         )
 
         order=Order_Service.update_order(
-            order_id=order_id,
+            order_id,
             validated_data=serializer.validated_data
         )
 
@@ -111,31 +110,53 @@ class Order_List_Api(
             request
     ):
         order = get_order()
-        return order
+        return Response (
+            {
+                "success":True,
+                "message":"Order Fetch Successfully",
+                "order": Order_Serializer(order, many=True).data
+            },
+            status=status.HTTP_200_OK
+        )
+            
 
 class Order_Detail_Api(
     APIView
 ):
     def get(
             self,
+            request,
             order_id,
-            request
     ):
         order= Order_Service.order_details(
             order_id
         )
 
-        return order
+        return Response (
+            {
+                "success":True,
+                "message":"Order Detail Fetched Successfully",
+                "order_details": order
+            },
+            status=status.HTTP_200_OK
+        )
 
 class Delete_Order_Api(
     APIView
 ):
     def delete(
         self,
-        order_id,
-        request
+        request,
+        order_id
     ):
         order = Order_Service.delete_order(
             order_id
         )
-        return order
+        return Response (
+            {
+                "success":True,
+                "message":"Order Deleted Successfully",
+                "order":order
+            },
+            status = status.HTTP_200_OK
+        )

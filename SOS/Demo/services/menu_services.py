@@ -44,7 +44,7 @@ class Menu_Service:
             updated_fields.append(field)
 
         menu.save(
-            updated_fields=updated_fields
+            update_fields=updated_fields
         )
         return menu
 
@@ -62,6 +62,6 @@ class Menu_Service:
             menu_id
         )
 
-        menu.delete
+        menu.delete()
 
         return ("Item Removed Successfully")
