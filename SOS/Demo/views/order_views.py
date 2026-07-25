@@ -43,6 +43,7 @@ class Create_Order_Api(
                         "Order Created"
                     ),
                     "order":{
+                        "id": order.id,
                         "Customer_Name": order.CustName,
                         "Phone":order.Phone,
                         "Car_number":order.Car_number,
@@ -87,10 +88,11 @@ class Update_Order_Api(
                                 "Order Updated"
                             ),
                             "order":{
+                                "id": order.id,
                                 "Customer_Name": order.CustName,
                                 "Phone":order.Phone,
                                 "Car_number":order.Car_number,
-                                "Table_number":order.Table_number_number,
+                                "Table_number":order.Table_number,
                                 "Items":order.Items,
                                 "Total":order.Total,
                                 "Status":order.Status,

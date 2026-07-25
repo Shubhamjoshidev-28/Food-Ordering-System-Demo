@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOS — Smart Ordering System</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ===================== HEADER ===================== -->
+  <header class="app-header">
+    <div class="app-header__brand">
+      <span class="app-header__mark">SOS</span>
+      <span class="app-header__title">Smart Ordering System</span>
+    </div>
+    <div class="app-header__actions">
+      <button type="button" id="menuManagementBtn" class="btn btn--ghost">Menu</button>
+      <button type="button" id="newOrderBtn" class="btn btn--primary">+ New Order</button>
+    </div>
+  </header>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="app-main">
+
+    <div class="section-heading">
+      <h1 class="section-heading__title">Live Orders</h1>
+
+      <div class="filter-tabs" role="tablist" aria-label="Order filter">
+        <button type="button" class="filter-tabs__btn is-active" data-filter="live" role="tab" aria-selected="true">Live</button>
+        <button type="button" class="filter-tabs__btn" data-filter="delivered" role="tab" aria-selected="false">Delivered</button>
+      </div>
+    </div>
+
+    <!-- Loading state -->
+    <div id="ordersLoading" class="state-message" hidden>
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Loading orders&hellip;</p>
+    </div>
+
+    <!-- Error state -->
+    <div id="ordersError" class="state-message state-message--error" hidden>
+      <p id="ordersErrorText">Could not load orders.</p>
+      <button type="button" id="ordersRetryBtn" class="btn btn--secondary btn--small">Retry</button>
+    </div>
+
+    <!-- Empty state -->
+    <div id="ordersEmpty" class="state-message" hidden>
+      <p id="ordersEmptyText">No active orders</p>
+    </div>
+
+    <!-- Orders grid -->
+    <div id="ordersGrid" class="orders-grid"></div>
+
+  </main>
+
+  <!-- ===================== NEW ORDER MODAL ===================== -->
+  <div id="newOrderModal" class="modal-overlay" hidden>
+    <div class="modal modal--wide" role="dialog" aria-modal="true" aria-labelledby="newOrderTitle">
+      <div class="modal__header">
+        <h2 id="newOrderTitle" class="modal__title">New Order</h2>
+        <button type="button" class="modal__close" data-close-modal="newOrderModal" aria-label="Close">&times;</button>
+      </div>
+
+      <form id="newOrderForm" class="modal__body">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="newCustName">Customer name</label>
+            <input type="text" id="newCustName" name="CustName" required>
+          </div>
+          <div class="form-field">
+            <label for="newPhone">Phone</label>
+            <input type="tel" id="newPhone" name="Phone">
+          </div>
+          <div class="form-field">
+            <label for="newTableNumber">Table number</label>
+            <input type="number" min="0" id="newTableNumber" name="Table_number">
+          </div>
+          <div class="form-field">
+            <label for="newCarNumber">Car number</label>
+            <input type="text" id="newCarNumber" name="Car_number">
+          </div>
+          <div class="form-field">
+            <label for="newStaff">Staff</label>
+            <input type="text" id="newStaff" name="Staff">
+          </div>
+          <div class="form-field">
+            <label for="newPaymentType">Payment type</label>
+            <select id="newPaymentType" name="Payment_Type">
+              <option value="">Select&hellip;</option>
+              <option value="Online">Online</option>
+              <option value="Offline">Offline</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="newPaymentStatus">Payment status</label>
+            <select id="newPaymentStatus" name="Payment_Status">
+              <option value="">Select&hellip;</option>
+              <option value="Pending">Pending</option>
+              <option value="Paid">Paid</option>
+            </select>
+          </div>
+        </div>
+
+        <h3 class="modal__subheading">Menu</h3>
+        <div id="newOrderMenuList" class="menu-picker"></div>
+
+        <div class="order-total-preview">
+          <span>Estimated total</span>
+          <strong id="newOrderTotalPreview">₹0</strong>
+        </div>
+
+        <div class="modal__footer">
+          <button type="button" class="btn btn--secondary" data-close-modal="newOrderModal">Cancel</button>
+          <button type="submit" id="createOrderSubmitBtn" class="btn btn--primary">Create Order</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================== ORDER DETAILS MODAL ===================== -->
+  <div id="orderDetailsModal" class="modal-overlay" hidden>
+    <div class="modal modal--wide" role="dialog" aria-modal="true" aria-labelledby="orderDetailsTitle">
+      <div class="modal__header">
+        <h2 id="orderDetailsTitle" class="modal__title">Order</h2>
+        <button type="button" class="modal__close" data-close-modal="orderDetailsModal" aria-label="Close">&times;</button>
+      </div>
+
+      <div class="modal__body">
+
+        <!-- Loading -->
+        <div id="orderDetailsLoading" class="state-message" hidden>
+          <div class="spinner" aria-hidden="true"></div>
+          <p>Loading order&hellip;</p>
+        </div>
+
+        <!-- VIEW MODE -->
+        <div id="orderDetailsView">
+          <div class="order-detail-grid" id="orderDetailFields"></div>
+
+          <div class="status-control">
+            <label for="orderStatusSelect">Status</label>
+            <select id="orderStatusSelect"></select>
+          </div>
+
+          <h3 class="modal__subheading">Items</h3>
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Size</th>
+                <th>Unit price</th>
+                <th>Qty</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody id="orderItemsTableBody"></tbody>
+          </table>
+
+          <div class="order-total-preview">
+            <span>Total</span>
+            <strong id="orderDetailsTotal">₹0</strong>
+          </div>
+
+          <div class="modal__footer modal__footer--split">
+            <button type="button" id="deleteOrderBtn" class="btn btn--danger">Delete</button>
+            <div class="modal__footer-right">
+              <button type="button" id="printBillBtn" class="btn btn--secondary">Print Bill</button>
+              <button type="button" id="editOrderBtn" class="btn btn--primary">Edit</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- EDIT MODE -->
+        <form id="editOrderForm" class="edit-order-form" hidden>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="editCustName">Customer name</label>
+              <input type="text" id="editCustName" name="CustName" required>
+            </div>
+            <div class="form-field">
+              <label for="editPhone">Phone</label>
+              <input type="tel" id="editPhone" name="Phone">
+            </div>
+            <div class="form-field">
+              <label for="editTableNumber">Table number</label>
+              <input type="number" min="0" id="editTableNumber" name="Table_number">
+            </div>
+            <div class="form-field">
+              <label for="editCarNumber">Car number</label>
+              <input type="text" id="editCarNumber" name="Car_number">
+            </div>
+            <div class="form-field">
+              <label for="editStaff">Staff</label>
+              <input type="text" id="editStaff" name="Staff">
+            </div>
+            <div class="form-field">
+              <label for="editPaymentType">Payment type</label>
+              <select id="editPaymentType" name="Payment_Type">
+                <option value="">Select&hellip;</option>
+                <option value="Online">Online</option>
+                <option value="Offline">Offline</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="editPaymentStatus">Payment status</label>
+              <select id="editPaymentStatus" name="Payment_Status">
+                <option value="">Select&hellip;</option>
+                <option value="Pending">Pending</option>
+                <option value="Paid">Paid</option>
+              </select>
+            </div>
+          </div>
+
+          <h3 class="modal__subheading">Menu</h3>
+          <div id="editOrderMenuList" class="menu-picker"></div>
+
+          <div class="order-total-preview">
+            <span>Estimated total</span>
+            <strong id="editOrderTotalPreview">₹0</strong>
+          </div>
+
+          <div class="modal__footer">
+            <button type="button" id="cancelEditOrderBtn" class="btn btn--secondary">Cancel</button>
+            <button type="submit" id="saveEditOrderBtn" class="btn btn--primary">Save Changes</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MENU MANAGEMENT MODAL ===================== -->
+  <div id="menuManagementModal" class="modal-overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="menuManagementTitle">
+      <div class="modal__header">
+        <h2 id="menuManagementTitle" class="modal__title">Menu Management</h2>
+        <button type="button" class="modal__close" data-close-modal="menuManagementModal" aria-label="Close">&times;</button>
+      </div>
+
+      <div class="modal__body">
+        <div id="menuManagementEmpty" class="state-message" hidden>
+          <p>No menu items available</p>
+        </div>
+
+        <div id="menuManagementList" class="menu-management-list"></div>
+
+        <h3 class="modal__subheading" id="menuFormHeading">Add Item</h3>
+        <form id="menuItemForm" class="form-grid form-grid--menu">
+          <div class="form-field">
+            <label for="menuItemName">Item name</label>
+            <input type="text" id="menuItemName" name="ItemName" required>
+          </div>
+          <div class="form-field">
+            <label for="menuItemQuantity">Size</label>
+            <select id="menuItemQuantity" name="ItemQuantity" required>
+              <option value="Half">Half</option>
+              <option value="Full">Full</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="menuItemPrice">Price (₹)</label>
+            <input type="number" min="0.01" step="0.01" id="menuItemPrice" name="ItemPrice" required>
+          </div>
+          <div class="form-field form-field--actions">
+            <button type="button" id="cancelMenuEditBtn" class="btn btn--secondary" hidden>Cancel</button>
+            <button type="submit" id="menuFormSubmitBtn" class="btn btn--primary">Add Item</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== TOASTS ===================== -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

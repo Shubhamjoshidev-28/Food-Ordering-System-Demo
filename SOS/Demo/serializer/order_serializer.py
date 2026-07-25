@@ -17,6 +17,7 @@ class Order_Serializer(
     class Meta:
         model=Order
         fields=[
+            "id",
             "CustName",
             "Phone",
             "Items",
@@ -24,6 +25,12 @@ class Order_Serializer(
             "Car_number",
             "Table_number",
             "Staff",
+            "Status",
             "Payment_Status",
-            "Payment_Type"
+            "Payment_Type",
+            "created_at"
+        ]
+        read_only_fields = [
+            "id",
+            "created_at"
         ]

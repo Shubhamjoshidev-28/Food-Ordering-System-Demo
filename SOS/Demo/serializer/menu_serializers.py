@@ -11,7 +11,11 @@ class Menu_Serializer(
     class Meta:
         model=Menu
         fields=[
+            "id",
             "ItemName",
             "ItemQuantity",
             "ItemPrice"
+        ]
+        read_only_fields = [
+            "id"
         ]

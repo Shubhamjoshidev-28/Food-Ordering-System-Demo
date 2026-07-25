@@ -1,0 +1,62 @@
+/* === Menu Items Inside Modal === */
+.menu-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0.2rem;
+    border-bottom: 1px solid #f0e6db;
+}
+
+.menu-item-row:last-child {
+    border-bottom: none;
+}
+
+.menu-item-row span:first-child {
+    font-weight: 500;
+    color: #444;
+}
+
+.menu-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.menu-item-controls button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background: #f9f9f9;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #555;
+    cursor: pointer;
+    transition: 0.15s;
+}
+
+.menu-item-controls button:hover {
+    background: #e67e22;
+    color: #fff;
+    border-color: #e67e22;
+}
+
+.menu-item-controls span {
+    min-width: 24px;
+    text-align: center;
+    font-weight: 600;
+    color: #e67e22;
+}
+
+/* === Responsive Tweaks === */
+@media (max-width: 600px) {
+    .modal-content {
+        padding: 1.5rem;
+    }
+    #detailActions {
+        flex-direction: column;
+    }
+    #detailActions button {
+        width: 100%;
+    }
+}

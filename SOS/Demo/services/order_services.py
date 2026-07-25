@@ -85,9 +85,15 @@ class Order_Service :
         if not order:
             return None
 
-        Items , Total = Order_Service.build_order_items(
-                    validated_data["Items"]
-                )
+        # Only rebuild Items/Total when the client actually sent new Items.
+        # This keeps a status-only (or any partial) update from crashing,
+        # and makes sure Total always reflects the freshly built Items.
+        if "Items" in validated_data:
+            Items, Total = Order_Service.build_order_items(
+                validated_data["Items"]
+            )
+            validated_data["Items"] = Items
+            validated_data["Total"] = Total
 
         updated_fields=[]
 
