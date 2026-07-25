@@ -69,10 +69,10 @@ class Update_Order_Api(
     ):
 
         serializer = Order_Serializer(
-            data=request.data
+            data=request.data,
+            partial=True
         )
         serializer.is_valid(
-            partial=True,
             raise_exception=True
         )
 
