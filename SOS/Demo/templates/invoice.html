@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {{ invoice.invoice_number }}
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #eeeeee;
+            font-family: "Courier New", monospace;
+            color: #000;
+        }
+
+        .receipt {
+            width: 80mm;
+            min-height: 100mm;
+
+            margin: 20px auto;
+
+            padding: 4mm;
+
+            background: white;
+
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .restaurant-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .restaurant-info {
+            font-size: 11px;
+        }
+
+        .divider {
+            border-top: 1px dashed #000;
+            margin: 8px 0;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .info-row span:last-child {
+            text-align: right;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .items-table th {
+            text-align: left;
+            border-bottom: 1px dashed #000;
+            padding: 4px 0;
+        }
+
+        .items-table td {
+            padding: 4px 0;
+            vertical-align: top;
+        }
+
+        .qty {
+            text-align: center;
+            width: 12%;
+        }
+
+        .price {
+            text-align: right;
+            width: 24%;
+        }
+
+        .item-name {
+            width: 64%;
+        }
+
+        .item-size {
+            display: block;
+            font-size: 10px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            margin-top: 5px;
+        }
+
+        .footer {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 11px;
+        }
+
+        .print-button {
+            display: block;
+
+            width: 80mm;
+
+            margin: 20px auto;
+
+            padding: 12px;
+
+            border: none;
+
+            background: #111;
+            color: white;
+
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+
+        /* THERMAL PRINTING */
+
+        @media print {
+
+            @page {
+                size: 80mm auto;
+                margin: 0;
+            }
+
+            body {
+                background: white;
+            }
+
+            .receipt {
+                width: 80mm;
+                margin: 0;
+                padding: 3mm;
+            }
+
+            .print-button {
+                display: none;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="receipt">
+
+
+    <!-- RESTAURANT -->
+
+    <div class="center">
+
+        <div class="restaurant-name">
+            AOne Chicken
+        </div>
+
+        <div class="restaurant-info">
+            Restaurant Address
+        </div>
+
+        <div class="restaurant-info">
+            Phone: +91 XXXXX XXXXX
+        </div>
+
+    </div>
+
+
+    <div class="divider"></div>
+
+
+    <!-- INVOICE INFORMATION -->
+
+    <div class="info-row">
+
+        <span>Invoice</span>
+
+        <span>
+            {{ invoice.invoice_number }}
+        </span>
+
+    </div>
+
+
+    <div class="info-row">
+
+        <span>Date</span>
+
+        <span>
+            {{ invoice.order.created_at|date:"d M Y" }}
+        </span>
+
+    </div>
+
+
+    <div class="info-row">
+
+        <span>Time</span>
+
+        <span>
+            {{ invoice.order.created_at|time:"h:i A" }}
+        </span>
+
+    </div>
+
+
+    {% if invoice.customer.table_number %}
+
+        <div class="info-row">
+
+            <span>Table</span>
+
+            <span>
+                {{ invoice.customer.table_number }}
+            </span>
+
+        </div>
+
+    {% endif %}
+
+
+    {% if invoice.customer.car_number %}
+
+        <div class="info-row">
+
+            <span>Car</span>
+
+            <span>
+                {{ invoice.customer.car_number }}
+            </span>
+
+        </div>
+
+    {% endif %}
+
+
+    {% if invoice.order.staff %}
+
+        <div class="info-row">
+
+            <span>Staff</span>
+
+            <span>
+                {{ invoice.order.staff }}
+            </span>
+
+        </div>
+
+    {% endif %}
+
+
+    <div class="divider"></div>
+
+
+    <!-- CUSTOMER -->
+
+    {% if invoice.customer.name %}
+
+        <div>
+            Customer:
+            {{ invoice.customer.name }}
+        </div>
+
+    {% endif %}
+
+
+    {% if invoice.customer.phone %}
+
+        <div>
+            Phone:
+            {{ invoice.customer.phone }}
+        </div>
+
+    {% endif %}
+
+
+    <div class="divider"></div>
+
+
+    <!-- ITEMS -->
+
+
+    <table class="items-table">
+
+        <thead>
+
+            <tr>
+
+                <th class="item-name">
+                    Item
+                </th>
+
+                <th class="qty">
+                    Qty
+                </th>
+
+                <th class="price">
+                    Amount
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            {% for item in invoice.items %}
+
+                <tr>
+
+                    <td class="item-name">
+
+                        {{ item.name }}
+
+                        {% if item.size %}
+                            <span class="item-size">
+                                {{ item.size }}
+                                @ ₹{{ item.unit_price }}
+                            </span>
+                        {% endif %}
+
+                    </td>
+
+
+                    <td class="qty">
+                        {{ item.qty }}
+                    </td>
+
+
+                    <td class="price">
+                        ₹{{ item.subtotal }}
+                    </td>
+
+                </tr>
+
+            {% empty %}
+
+                <tr>
+
+                    <td colspan="3">
+                        No items
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+
+    <div class="divider"></div>
+
+
+    <!-- TOTAL -->
+
+
+    <div class="total-row">
+
+        <span>
+            TOTAL
+        </span>
+
+        <span>
+            ₹{{ invoice.total }}
+        </span>
+
+    </div>
+
+
+    <div class="divider"></div>
+
+
+    <!-- PAYMENT -->
+
+
+    <div class="info-row">
+
+        <span>Payment</span>
+
+        <span>
+            {{ invoice.order.payment_type }}
+        </span>
+
+    </div>
+
+
+    <div class="info-row">
+
+        <span>Status</span>
+
+        <span>
+            {{ invoice.order.payment_status }}
+        </span>
+
+    </div>
+
+
+    <div class="divider"></div>
+
+
+    <!-- FOOTER -->
+
+
+    <div class="footer">
+
+        Thank you for your order!
+
+        <br>
+
+        Please visit again.
+
+        <br><br>
+
+        {{ invoice.invoice_number }}
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>

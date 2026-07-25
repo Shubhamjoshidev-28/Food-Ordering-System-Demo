@@ -14,6 +14,9 @@ from Demo.views.menu_views import (
     Delete_menu_item,
     Menu_list_item
 )
+from Demo.views.invoice_views import (
+    generate_invoice
+)
 
 urlpatterns=[
     path('create_order/',Create_Order_Api.as_view(),name='create_order'),
@@ -26,4 +29,6 @@ urlpatterns=[
     path('menu_list/',Menu_list_item.as_view(),name='list_menu'),
     path('update_menu/<int:item_id>/',Edit_menu_item.as_view(),name='update_menu'),
     path('delete_menu/<int:item_id>/',Delete_menu_item.as_view(),name='delete_menu'),
+
+    path('generate_invoice/<int:order_id>/',generate_invoice,name="generate_bill")
 ]
